@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.Data.SqlClient;
 using MyGuitarShop.Data.Ado.Factories;
+using System.Diagnostics;
 
 namespace MyGuitarShop.Api
 {
@@ -9,38 +10,51 @@ namespace MyGuitarShop.Api
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
-
-            AddLogging(builder);
-
-            AddServices(builder);
-
-            var connectionString = builder.Configuration.GetConnectionString("MyGuitarShop");
-
-            // Add services to the container.
-
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
-            var app = builder.Build();
-
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+            try
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+                var builder = WebApplication.CreateBuilder(args);
 
+                AddLogging(builder);
+
+                AddServices(builder);
+
+                // Add services to the container.
+
+                builder.Services.AddControllers();
+                // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+                if (builder.Environment.IsDevelopment())
+                {
+                    builder.Services.AddEndpointsApiExplorer();
+                    builder.Services.AddSwaggerGen();
+                }
+
+                var app = builder.Build();
+
+                // Configure the HTTP request pipeline.
+                if (app.Environment.IsDevelopment())
+                {
+                    app.UseSwagger();
+                    app.UseSwaggerUI();
+                }
+
+                ConfigureApplication(app);
+
+                app.Run();
+            }
+            catch (Exception ex)
+            {
+                if (Debugger.IsAttached) Debugger.Break();
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        private static void ConfigureApplication(WebApplication app)
+        {
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
-
             app.MapControllers();
-
-            app.Run();
         }
 
         private static void AddLogging(WebApplicationBuilder builder)
