@@ -1,4 +1,8 @@
 
+using Microsoft.AspNetCore.HttpLogging;
+using Microsoft.Data.SqlClient;
+using MyGuitarShop.Data.Ado.Factories;
+
 namespace MyGuitarShop.Api
 {
     public class Program
@@ -6,6 +10,12 @@ namespace MyGuitarShop.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            AddLogging(builder);
+
+            AddServices(builder);
+
+            var connectionString = builder.Configuration.GetConnectionString("MyGuitarShop");
 
             // Add services to the container.
 
@@ -31,6 +41,35 @@ namespace MyGuitarShop.Api
             app.MapControllers();
 
             app.Run();
+        }
+
+        private static void AddLogging(WebApplicationBuilder builder)
+        {
+            builder.Services.AddLogging(logging => 
+            { 
+                logging.ClearProviders();
+                logging
+                .AddFilter("Microsoft", LogLevel.Information)
+                .AddFilter("Microsoft.AspNetCore.HttpLogging", LogLevel.Information)
+                .AddConsole();
+            });
+
+            builder.Services.AddHttpLogging(options =>
+            {
+                options.LoggingFields = HttpLoggingFields.RequestPath
+                                        | HttpLoggingFields.RequestMethod
+                                        | HttpLoggingFields.ResponseStatusCode;
+            });
+        }
+
+        private static void AddServices(WebApplicationBuilder builder)
+        {
+            var connectionString = builder.Configuration.GetConnectionString("MyGuitarShop")
+                ?? throw new InvalidOperationException("MyGuitarShop connection string not found.");
+
+            builder.Services.AddSingleton(new SqlConnectionFactory(connectionString));
+
+            builder.Services.AddControllers();
         }
     }
 }
