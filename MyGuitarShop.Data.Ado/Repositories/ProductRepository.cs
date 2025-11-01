@@ -14,8 +14,9 @@ namespace MyGuitarShop.Data.Ado.Repositories
     public class ProductRepo(
         ILogger<ProductRepo> logger,
         SqlConnectionFactory connectionFactory)
+        : IRepository<ProductEntity>
     {
-        public async Task<IEnumerable<ProductEntity>> GetAllProductsAsync()
+        public async Task<IEnumerable<ProductEntity>> GetAllAsync()
         {
             var products = new List<ProductEntity>();
 
@@ -48,6 +49,26 @@ namespace MyGuitarShop.Data.Ado.Repositories
                 logger.LogError(ex.Message, "Error retrieving product list");
             }
             return products;
+        }
+
+        public Task<int> DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ProductEntity?> FindByIdAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> InsertAsync(ProductEntity entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> UpdateAsync(int id, ProductEntity entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }
