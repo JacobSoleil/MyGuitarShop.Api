@@ -33,13 +33,13 @@ namespace MyGuitarShop.Data.Ado.Repositories
                     var product = new ProductEntity
                     {
                         ProductID = reader.GetInt32(reader.GetOrdinal("ProductID")),
-                        CategoryID = reader.GetInt32(reader.GetOrdinal("CategoryID")),
+                        CategoryID = reader.IsDBNull(reader.GetOrdinal("CategoryID")) ? null : reader.GetInt32(reader.GetOrdinal("ProductID")),
                         ProductCode = reader.GetString(reader.GetOrdinal("ProductCode")),
                         ProductName = reader.GetString(reader.GetOrdinal("ProductName")),
                         Description = reader.GetString(reader.GetOrdinal("Description")),
                         ListPrice = reader.GetDecimal(reader.GetOrdinal("ListPrice")),
                         DiscountPercent = reader.GetDecimal(reader.GetOrdinal("DiscountPercent")),
-                        DateAdded = reader.GetDateTime(reader.GetOrdinal("DateAdded"))
+                        DateAdded = reader.IsDBNull(reader.GetOrdinal("DateAdded")) ? null : reader.GetDateTime(reader.GetOrdinal("DateAdded"))
                     };
                     products.Add(product);
                 }
@@ -51,22 +51,22 @@ namespace MyGuitarShop.Data.Ado.Repositories
             return products;
         }
 
-        public Task<int> DeleteAsync(int id)
+        public async Task<int> DeleteAsync(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ProductEntity?> FindByIdAsync(int id)
+        public async Task<ProductEntity?> FindByIdAsync(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<int> InsertAsync(ProductEntity entity)
+        public async Task<int> InsertAsync(ProductEntity entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task<int> UpdateAsync(int id, ProductEntity entity)
+        public async Task<int> UpdateAsync(int id, ProductEntity entity)
         {
             throw new NotImplementedException();
         }

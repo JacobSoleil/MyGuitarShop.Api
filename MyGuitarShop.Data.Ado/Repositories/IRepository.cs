@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MyGuitarShop.Data.Ado.Repositories
 {
-    internal interface IRepository<T>
+    public interface IRepository<T>
     {
         Task<IEnumerable<T>> GetAllAsync();
         Task<T?> FindByIdAsync(int id);

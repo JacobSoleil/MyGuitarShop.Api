@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MyGuitarShop.Data.Ado.Entities
 {
-    internal class AddressEntity
+    public class AddressEntity
     {
         public required int AddressID { get; set; }
 

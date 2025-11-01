@@ -1,6 +1,8 @@
 
+using Microsoft.AspNetCore.DataProtection.Repositories;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.Data.SqlClient;
+using MyGuitarShop.Data.Ado.Entities;
 using MyGuitarShop.Data.Ado.Factories;
 using MyGuitarShop.Data.Ado.Repositories;
 using System.Diagnostics;
@@ -85,6 +87,8 @@ namespace MyGuitarShop.Api
             builder.Services.AddSingleton(new SqlConnectionFactory(connectionString));
 
             builder.Services.AddScoped<ProductRepo>();
+
+            builder.Services.AddScoped<AddressRepo>();
 
             builder.Services.AddControllers();
         }

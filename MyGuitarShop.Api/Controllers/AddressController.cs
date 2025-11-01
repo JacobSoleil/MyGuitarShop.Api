@@ -6,9 +6,9 @@ namespace MyGuitarShop.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductsController(
-        ILogger<ProductsController> logger,
-        ProductRepo repo)
+    public class AddressController(
+        ILogger<AddressController> logger,
+        AddressRepo repo)
         : ControllerBase
     {
         [HttpGet]
@@ -16,13 +16,13 @@ namespace MyGuitarShop.Api.Controllers
         {
             try
             {
-                var products = await repo.GetAllAsync();
+                var addresses = await repo.GetAllAsync();
 
-                return Ok(products.Select(p => p.ProductName));
+                return Ok(addresses.Select(p => p.AddressID));
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error fetching Products");
+                logger.LogError(ex, "Error fetching Addresses");
 
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
