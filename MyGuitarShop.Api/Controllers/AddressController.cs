@@ -82,5 +82,25 @@ namespace MyGuitarShop.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAsync(int id)
+        {
+            try
+            {
+                if (await repo.FindByIdAsync(id) == null)
+                    return NotFound($"Address with id {id} not found");
+
+                var numberAddressesDeleted = await repo.DeleteAsync(id);
+
+                return Ok($"{numberAddressesDeleted} addresses deleted");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message, "Error deleting address with ID {AddressID}", id);
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+            }
+        }
     }
 }

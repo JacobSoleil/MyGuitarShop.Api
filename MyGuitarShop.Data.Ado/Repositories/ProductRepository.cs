@@ -71,8 +71,6 @@ namespace MyGuitarShop.Data.Ado.Repositories
                 logger.LogError(ex.Message, "Error deleting product");
                 return 0;
             }
-
-            throw new NotImplementedException();
         }
 
         public async Task<ProductDto?> FindByIdAsync(int id)
@@ -144,7 +142,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
         public async Task<int> UpdateAsync(int id, ProductDto dto)
         {
             const string query = @"UPDATE Products 
-                                    SET ProductName = @ProductName, Description = @Description, ListPrice = @ListPrice, DiscountPercent = @DiscountPercent
+                                    SET CategoryID = @CategoryID, ProductCode = @ProductCode, ProductName = @ProductName, Description = @Description, ListPrice = @ListPrice, DiscountPercent = @DiscountPercent
                                     WHERE ProductID = @ProductID;";
 
             try
@@ -154,6 +152,8 @@ namespace MyGuitarShop.Data.Ado.Repositories
                 await using var cmd = new SqlCommand(query, conn);
 
                 cmd.Parameters.AddWithValue("@ProductID", id);
+                cmd.Parameters.AddWithValue("@CategoryID", dto.CategoryID);
+                cmd.Parameters.AddWithValue("@ProductCode", dto.ProductCode);
                 cmd.Parameters.AddWithValue("@ProductName", dto.ProductName);
                 cmd.Parameters.AddWithValue("@Description", dto.Description);
                 cmd.Parameters.AddWithValue("@ListPrice", dto.ListPrice);

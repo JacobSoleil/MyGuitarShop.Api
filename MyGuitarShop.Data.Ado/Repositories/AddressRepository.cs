@@ -19,7 +19,23 @@ namespace MyGuitarShop.Data.Ado.Repositories
     {
         public async Task<int> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            const string query = @"DELETE FROM Addresses WHERE AddressID = @AddressID;";
+
+            try
+            {
+                await using var conn = await connectionFactory.OpenSqlConnectionAsync();
+
+                await using var cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@AddressID", id);
+
+                return await cmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message, "Error deleting address");
+                return 0;
+            }
         }
 
         public async Task<AddressDto?> FindByIdAsync(int id)
