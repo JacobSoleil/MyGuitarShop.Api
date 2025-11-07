@@ -47,5 +47,21 @@ namespace MyGuitarShop.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateAddressAsync(AddressDto newAddress)
+        {
+            try
+            {
+                var numberAddressessCreated = await repo.InsertAsync(newAddress);
+
+                return Ok($"{numberAddressessCreated} addresses created");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error adding new address with ID {AddressID}", newAddress.AddressID);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+            }
+        }
     }
 }

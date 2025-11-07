@@ -99,7 +99,32 @@ namespace MyGuitarShop.Data.Ado.Repositories
 
         public async Task<int> InsertAsync(AddressDto dto)
         {
-            throw new NotImplementedException();
+            const string query = @"INSERT INTO Addresses 
+                    (CustomerID, Line1, Line2, City, State, ZipCode, Phone, Disabled) VALUES
+                    (@CustomerID, @Line1, @Line2, @City, @State, @ZipCode, @Phone, @Disabled)";
+
+            try
+            {
+                await using var conn = await connectionFactory.OpenSqlConnectionAsync();
+
+                await using var cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@CustomerID", dto.CustomerID);
+                cmd.Parameters.AddWithValue("@Line1", dto.Line1);
+                cmd.Parameters.AddWithValue("@Line2", dto.Line2);
+                cmd.Parameters.AddWithValue("@City", dto.City);
+                cmd.Parameters.AddWithValue("@State", dto.State);
+                cmd.Parameters.AddWithValue("@ZipCode", dto.ZipCode);
+                cmd.Parameters.AddWithValue("@Phone", dto.Phone);
+                cmd.Parameters.AddWithValue("@Disabled", dto.Disabled);
+
+                return await cmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message, "Error inserting new address");
+                return 0;
+            }
         }
 
         public async Task<int> UpdateAsync(int id, AddressDto entity)

@@ -121,8 +121,6 @@ namespace MyGuitarShop.Data.Ado.Repositories
                 logger.LogError(ex.Message, "Error inserting new product");
                 return 0;
             }
-
-            throw new NotImplementedException();
         }
 
         public async Task<int> UpdateAsync(int id, ProductDto dto)
