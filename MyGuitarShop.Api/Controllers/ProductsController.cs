@@ -27,5 +27,24 @@ namespace MyGuitarShop.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetByIdAsync(int id)
+        {
+            try
+            {
+                var product = await repo.FindByIdAsync(id);
+                if (product == null)
+                {
+                    return NotFound();
+                }
+                return Ok(product);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error retrieving product with ID {ProductID}", id);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+            }
+        }
     }
 }

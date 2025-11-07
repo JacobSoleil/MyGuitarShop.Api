@@ -23,7 +23,41 @@ namespace MyGuitarShop.Data.Ado.Repositories
 
         public async Task<AddressEntity?> FindByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            AddressEntity? address = null;
+
+            try
+            {
+                await using var conn = await connectionFactory.OpenSqlConnectionAsync();
+
+                await using var cmd = new SqlCommand("SELECT * FROM Addresses WHERE AddressID = " + id.ToString() + ";", conn);
+
+                await using var reader = await cmd.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
+                {
+                    address = new AddressEntity
+                    {
+                        AddressID = reader.GetInt32(reader.GetOrdinal("AddressID")),
+                        CustomerID = reader.IsDBNull(reader.GetOrdinal("CustomerID")) ? null : reader.GetInt32(reader.GetOrdinal("CustomerID")),
+                        Line1 = reader.GetString(reader.GetOrdinal("Line1")),
+                        Line2 = reader.IsDBNull(reader.GetOrdinal("Line2")) ? null : reader.GetString(reader.GetOrdinal("Line2")),
+                        City = reader.GetString(reader.GetOrdinal("City")),
+                        State = reader.GetString(reader.GetOrdinal("State")),
+                        ZipCode = reader.GetString(reader.GetOrdinal("ZipCode")),
+                        Phone = reader.GetString(reader.GetOrdinal("Phone")),
+                        Disabled = reader.GetInt32(reader.GetOrdinal("Disabled"))
+                    };
+                }
+                else
+                {
+                    logger.LogError("Specified ID could not be found");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message, "Error retrieving address by ID");
+            }
+            return address;
         }
 
         public async Task<IEnumerable<AddressEntity>> GetAllAsync()
@@ -57,7 +91,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message, "Error retrieving product list");
+                logger.LogError(ex.Message, "Error retrieving address list");
             }
             return addresses;
         }

@@ -58,7 +58,40 @@ namespace MyGuitarShop.Data.Ado.Repositories
 
         public async Task<ProductEntity?> FindByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            ProductEntity? product = null;
+
+            try
+            {
+                await using var conn = await connectionFactory.OpenSqlConnectionAsync();
+
+                await using var cmd = new SqlCommand("SELECT * FROM Products WHERE ProductID = " + id.ToString() + ";", conn);
+
+                await using var reader = await cmd.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
+                {
+                    product = new ProductEntity
+                    {
+                        ProductID = reader.GetInt32(reader.GetOrdinal("ProductID")),
+                        CategoryID = reader.IsDBNull(reader.GetOrdinal("CategoryID")) ? null : reader.GetInt32(reader.GetOrdinal("ProductID")),
+                        ProductCode = reader.GetString(reader.GetOrdinal("ProductCode")),
+                        ProductName = reader.GetString(reader.GetOrdinal("ProductName")),
+                        Description = reader.GetString(reader.GetOrdinal("Description")),
+                        ListPrice = reader.GetDecimal(reader.GetOrdinal("ListPrice")),
+                        DiscountPercent = reader.GetDecimal(reader.GetOrdinal("DiscountPercent")),
+                        DateAdded = reader.IsDBNull(reader.GetOrdinal("DateAdded")) ? null : reader.GetDateTime(reader.GetOrdinal("DateAdded"))
+                    };
+                }
+                else
+                {
+                    logger.LogError("Specified ID could not be found");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message, "Error retrieving product by ID");
+            }
+            return product;
         }
 
         public async Task<int> InsertAsync(ProductEntity entity)
