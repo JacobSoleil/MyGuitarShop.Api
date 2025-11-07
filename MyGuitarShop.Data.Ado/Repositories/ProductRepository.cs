@@ -54,6 +54,24 @@ namespace MyGuitarShop.Data.Ado.Repositories
 
         public async Task<int> DeleteAsync(int id)
         {
+            const string query = @"DELETE FROM Products WHERE ProductID = @ProductID;";
+
+            try
+            {
+                await using var conn = await connectionFactory.OpenSqlConnectionAsync();
+
+                await using var cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@ProductID", id);
+
+                return await cmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message, "Error deleting product");
+                return 0;
+            }
+
             throw new NotImplementedException();
         }
 

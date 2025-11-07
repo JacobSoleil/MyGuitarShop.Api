@@ -23,7 +23,7 @@ namespace MyGuitarShop.Api.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error fetching Addresses");
+                logger.LogError(ex.Message, "Error fetching Addresses");
 
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
@@ -43,7 +43,7 @@ namespace MyGuitarShop.Api.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error retrieving address with ID {AddressID}", id);
+                logger.LogError(ex.Message, "Error retrieving address with ID {AddressID}", id);
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }
@@ -59,7 +59,7 @@ namespace MyGuitarShop.Api.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error adding new address with ID {AddressID}", newAddress.AddressID);
+                logger.LogError(ex.Message, "Error adding new address with ID {AddressID}", newAddress.AddressID);
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }
@@ -72,17 +72,15 @@ namespace MyGuitarShop.Api.Controllers
                 if (await repo.FindByIdAsync(id) == null)
                     return NotFound($"Address with id {id} not found");
 
-                var numberAddressesCreated = await repo.UpdateAsync(id, updatedAddress);
+                var numberAddressesUpdated = await repo.UpdateAsync(id, updatedAddress);
 
-                return Ok($"{numberAddressesCreated} products created");
+                return Ok($"{numberAddressesUpdated} products created");
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error updating address with ID {AddressID}", updatedAddress.AddressID);
+                logger.LogError(ex.Message, "Error updating address with ID {AddressID}", id);
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
-
-            throw new NotImplementedException();
         }
     }
 }

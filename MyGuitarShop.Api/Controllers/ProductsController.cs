@@ -24,7 +24,8 @@ namespace MyGuitarShop.Api.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error fetching Products");
+                logger.LogError(ex.Message, "Error fetching Products");
+
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -35,15 +36,17 @@ namespace MyGuitarShop.Api.Controllers
             try
             {
                 var product = await repo.FindByIdAsync(id);
+
                 if (product == null)
                 {
                     return NotFound($"Product with id {id} not found");
                 }
+
                 return Ok(product);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error retrieving product with ID {ProductID}", id);
+                logger.LogError(ex.Message, "Error retrieving product with ID {ProductID}", id);
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }
@@ -59,7 +62,7 @@ namespace MyGuitarShop.Api.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error adding new product with ID {ProductID}", newProduct.ProductID);
+                logger.LogError(ex.Message, "Error adding new product with ID {ProductID}", newProduct.ProductID);
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }
@@ -72,17 +75,37 @@ namespace MyGuitarShop.Api.Controllers
                 if (await repo.FindByIdAsync(id) == null)
                     return NotFound($"Product with id {id} not found");
 
-                var numberProductsCreated = await repo.UpdateAsync(id, updatedProduct);
+                var numberProductsUpdated = await repo.UpdateAsync(id, updatedProduct);
 
-                return Ok($"{numberProductsCreated} products created");
+                return Ok($"{numberProductsUpdated} products updated");
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error updating product with ID {ProductID}", updatedProduct.ProductID);
+                logger.LogError(ex.Message, "Error updating product with ID {ProductID}", id);
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
 
             throw new NotImplementedException();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAsync(int id)
+        {
+            try
+            {
+                if (await repo.FindByIdAsync(id) == null)
+                    return NotFound($"Product with id {id} not found");
+
+                var numberProductsDeleted = await repo.DeleteAsync(id);
+
+                return Ok($"{numberProductsDeleted} products deleted");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message, "Error deleting product with ID {ProductID}", id);
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+            }
         }
     }
 }
