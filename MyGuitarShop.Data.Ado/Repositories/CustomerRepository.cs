@@ -13,7 +13,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
     public class CustomerRepo(
         ILogger<CustomerRepo> logger,
         SqlConnectionFactory connectionFactory)
-        : IRepository<CustomerDto>
+        : IUniqueRepository<CustomerDto>
     {
         public async Task<int> DeleteAsync(int id)
         {
@@ -78,6 +78,48 @@ namespace MyGuitarShop.Data.Ado.Repositories
             return customer;
         }
 
+        public async Task<CustomerDto?> FindByUniqueAsync(string ident)
+        {
+            const string query = @"SELECT * FROM Customers WHERE EmailAddress = @EmailAddress;";
+
+            CustomerDto? customer = null;
+
+            try
+            {
+                await using var conn = await connectionFactory.OpenSqlConnectionAsync();
+
+                await using var cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@EmailAddress", ident);
+
+                await using var reader = await cmd.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
+                {
+                    customer = new CustomerDto
+                    {
+                        CustomerID = reader.GetInt32(reader.GetOrdinal("CustomerID")),
+                        EmailAddress = reader.GetString(reader.GetOrdinal("EmailAddress")),
+                        Password = reader.GetString(reader.GetOrdinal("Password")),
+                        FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                        LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                        ShippingAddressID = reader.IsDBNull(reader.GetOrdinal("ShippingAddressID")) ? null : reader.GetInt32(reader.GetOrdinal("ShippingAddressID")),
+                        BillingAddressID = reader.IsDBNull(reader.GetOrdinal("BillingAddressID")) ? null : reader.GetInt32(reader.GetOrdinal("BillingAddressID"))
+                    };
+                }
+                else
+                {
+                    logger.LogError("Specified identifier could not be found");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message, "Error retrieving customer by email address");
+                throw;
+            }
+            return customer;
+        }
+
         public async Task<IEnumerable<CustomerDto>> GetAllAsync()
         {
             const string query = @"SELECT * FROM Customers;";
@@ -118,7 +160,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
         public async Task<int> InsertAsync(CustomerDto dto)
         {
             const string query = @"INSERT INTO Customers 
-                    Customers (EmailAddress, Password, FirstName, LastName, ShippingAddressID, BillingAddressID) VALUES
+                    (EmailAddress, Password, FirstName, LastName, ShippingAddressID, BillingAddressID) VALUES
                     (@EmailAddress, @Password, @FirstName, @LastName, @ShippingAddressID, @BillingAddressID);";
 
             try
@@ -155,6 +197,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
 
                 await using var cmd = new SqlCommand(query, conn);
 
+                cmd.Parameters.AddWithValue("@CustomerID", id);
                 cmd.Parameters.AddWithValue("@EmailAddress", dto.EmailAddress);
                 cmd.Parameters.AddWithValue("@Password", dto.Password);
                 cmd.Parameters.AddWithValue("@FirstName", dto.FirstName);

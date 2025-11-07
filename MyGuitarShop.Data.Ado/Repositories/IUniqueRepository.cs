@@ -9,6 +9,6 @@ namespace MyGuitarShop.Data.Ado.Repositories
 {
     public interface IUniqueRepository<TDto> : IRepository<TDto>
     {
-        Task<ProductDto?> FindByUniqueAsync(string ident);
+        Task<TDto> FindByUniqueAsync(string ident);
     }
 }
