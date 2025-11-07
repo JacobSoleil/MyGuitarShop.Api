@@ -96,6 +96,32 @@ namespace MyGuitarShop.Data.Ado.Repositories
 
         public async Task<int> InsertAsync(ProductEntity entity)
         {
+            //const string query = @"INSERT INTO Products 
+            //        (CategoryID, ProductCode, ProductName, Description, ListPrice, DiscountPercent, DateAdded) VALUES
+            //        (@CategoryID, @ProductCode, @ProductName, @Description, @ListPrice, @DiscountPercent, @DateAdded);";
+
+            //try
+            //{
+            //    await using var conn = await connectionFactory.OpenSqlConnectionAsync();
+
+            //    await using var cmd = new SqlCommand(query, conn);
+
+            //    cmd.Parameters.AddWithValue("@CategoryID", entity.CategoryID);
+            //    cmd.Parameters.AddWithValue("@ProductCode", entity.ProductCode);
+            //    cmd.Parameters.AddWithValue("@ProductName", entity.ProductName);
+            //    cmd.Parameters.AddWithValue("@Description", entity.Description);
+            //    cmd.Parameters.AddWithValue("@ListPrice", entity.ListPrice);
+            //    cmd.Parameters.AddWithValue("@SDiscountPercent", entity.DiscountPercent);
+            //    cmd.Parameters.AddWithValue("@DateAdded", entity.DateAdded);
+
+            //    return await cmd.ExecuteNonQueryAsync();
+            //}
+            //catch (Exception ex)
+            //{
+            //    logger.LogError(ex.Message, "Error retrieving product by ID");
+            //    return 0;
+            //}
+
             throw new NotImplementedException();
         }
 

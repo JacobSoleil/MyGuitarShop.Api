@@ -23,7 +23,6 @@ namespace MyGuitarShop.Api.Controllers
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error fetching Products");
-
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -45,6 +44,24 @@ namespace MyGuitarShop.Api.Controllers
                 logger.LogError(ex, "Error retrieving product with ID {ProductID}", id);
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> InsertAsync(ProductEntity newProduct)
+        {
+            //try
+            //{
+            //    var numberProductsCreated = await repo.InsertAsync(newProduct);
+
+            //    return Ok($"{numberProductsCreated} products created");
+            //}
+            //catch (Exception ex)
+            //{
+            //    logger.LogError(ex, "Error adding new product with ID {ProductID}", newProduct.ProductID);
+            //    return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+            //}
+
+            throw new NotImplementedException();
         }
     }
 }
