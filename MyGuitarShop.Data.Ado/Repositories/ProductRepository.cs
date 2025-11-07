@@ -19,13 +19,15 @@ namespace MyGuitarShop.Data.Ado.Repositories
     {
         public async Task<IEnumerable<ProductDto>> GetAllAsync()
         {
+            const string query = "SELECT * FROM Products;";
+
             var products = new List<ProductDto>();
 
             try
             {
                 await using var conn = await connectionFactory.OpenSqlConnectionAsync();
 
-                await using var cmd = new SqlCommand("SELECT * FROM Products", conn);
+                await using var cmd = new SqlCommand(query, conn);
 
                 await using var reader = await cmd.ExecuteReaderAsync();
 
@@ -48,6 +50,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
             catch (Exception ex) 
             {
                 logger.LogError(ex.Message, "Error retrieving product list");
+                throw;
             }
             return products;
         }
@@ -69,19 +72,23 @@ namespace MyGuitarShop.Data.Ado.Repositories
             catch (Exception ex)
             {
                 logger.LogError(ex.Message, "Error deleting product");
-                return 0;
+                throw;
             }
         }
 
         public async Task<ProductDto?> FindByIdAsync(int id)
         {
+            const string query = @"SELECT * FROM Products WHERE ProductID = @ProductID;";
+
             ProductDto? product = null;
 
             try
             {
                 await using var conn = await connectionFactory.OpenSqlConnectionAsync();
 
-                await using var cmd = new SqlCommand("SELECT * FROM Products WHERE ProductID = " + id.ToString() + ";", conn);
+                await using var cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@ProductID", id);
 
                 await using var reader = await cmd.ExecuteReaderAsync();
 
@@ -107,6 +114,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
             catch (Exception ex)
             {
                 logger.LogError(ex.Message, "Error retrieving product by ID");
+                throw;
             }
             return product;
         }
@@ -135,7 +143,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
             catch (Exception ex)
             {
                 logger.LogError(ex.Message, "Error inserting new product");
-                return 0;
+                throw;
             }
         }
 
@@ -164,7 +172,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
             catch (Exception ex)
             {
                 logger.LogError(ex.Message, "Error updating product");
-                return 0;
+                throw;
             }
         }
     }

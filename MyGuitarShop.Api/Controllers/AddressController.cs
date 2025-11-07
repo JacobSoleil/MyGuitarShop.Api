@@ -34,12 +34,12 @@ namespace MyGuitarShop.Api.Controllers
         {
             try
             {
-                var product = await repo.FindByIdAsync(id);
-                if (product == null)
+                var address = await repo.FindByIdAsync(id);
+                if (address == null)
                 {
                     return NotFound();
                 }
-                return Ok(product);
+                return Ok(address);
             }
             catch (Exception ex)
             {
@@ -74,7 +74,7 @@ namespace MyGuitarShop.Api.Controllers
 
                 var numberAddressesUpdated = await repo.UpdateAsync(id, updatedAddress);
 
-                return Ok($"{numberAddressesUpdated} products created");
+                return Ok($"{numberAddressesUpdated} addresses updated");
             }
             catch (Exception ex)
             {

@@ -34,19 +34,23 @@ namespace MyGuitarShop.Data.Ado.Repositories
             catch (Exception ex)
             {
                 logger.LogError(ex.Message, "Error deleting address");
-                return 0;
+                throw;
             }
         }
 
         public async Task<AddressDto?> FindByIdAsync(int id)
         {
+            const string query = @"SELECT * FROM Addresses WHERE AddressID = @AddressID;";
+
             AddressDto? address = null;
 
             try
             {
                 await using var conn = await connectionFactory.OpenSqlConnectionAsync();
 
-                await using var cmd = new SqlCommand("SELECT * FROM Addresses WHERE AddressID = " + id.ToString() + ";", conn);
+                await using var cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@AddressID", id);
 
                 await using var reader = await cmd.ExecuteReaderAsync();
 
@@ -73,19 +77,22 @@ namespace MyGuitarShop.Data.Ado.Repositories
             catch (Exception ex)
             {
                 logger.LogError(ex.Message, "Error retrieving address by ID");
+                throw;
             }
             return address;
         }
 
         public async Task<IEnumerable<AddressDto>> GetAllAsync()
         {
+            const string query = @"SELECT * FROM Addresses;";
+
             var addresses = new List<AddressDto>();
 
             try
             {
                 await using var conn = await connectionFactory.OpenSqlConnectionAsync();
 
-                await using var cmd = new SqlCommand("SELECT * FROM Addresses", conn);
+                await using var cmd = new SqlCommand(query, conn);
 
                 await using var reader = await cmd.ExecuteReaderAsync();
 
@@ -109,6 +116,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
             catch (Exception ex)
             {
                 logger.LogError(ex.Message, "Error retrieving address list");
+                throw;
             }
             return addresses;
         }
@@ -117,7 +125,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
         {
             const string query = @"INSERT INTO Addresses 
                     (CustomerID, Line1, Line2, City, State, ZipCode, Phone, Disabled) VALUES
-                    (@CustomerID, @Line1, @Line2, @City, @State, @ZipCode, @Phone, @Disabled)";
+                    (@CustomerID, @Line1, @Line2, @City, @State, @ZipCode, @Phone, @Disabled);";
 
             try
             {
@@ -139,7 +147,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
             catch (Exception ex)
             {
                 logger.LogError(ex.Message, "Error inserting new address");
-                return 0;
+                throw;
             }
         }
 
@@ -169,7 +177,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
             catch (Exception ex)
             {
                 logger.LogError(ex.Message, "Error updating address");
-                return 0;
+                throw;
             }
 
             throw new NotImplementedException();
