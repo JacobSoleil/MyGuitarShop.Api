@@ -63,5 +63,26 @@ namespace MyGuitarShop.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAddressAsync(int id, AddressDto updatedAddress)
+        {
+            try
+            {
+                if (await repo.FindByIdAsync(id) == null)
+                    return NotFound($"Address with id {id} not found");
+
+                var numberAddressesCreated = await repo.UpdateAsync(id, updatedAddress);
+
+                return Ok($"{numberAddressesCreated} products created");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error updating address with ID {AddressID}", updatedAddress.AddressID);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+            }
+
+            throw new NotImplementedException();
+        }
     }
 }
