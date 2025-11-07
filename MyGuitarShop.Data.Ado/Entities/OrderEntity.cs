@@ -21,6 +21,8 @@ namespace MyGuitarShop.Data.Ado.Entities
 
         public DateTime? ShipDate { get; set; }
 
+        public required int ShipAddressID { get; set; }
+
         [MaxLength(50)]
         public required string CardType { get; set; }
 
