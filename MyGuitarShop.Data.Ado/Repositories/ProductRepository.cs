@@ -112,7 +112,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
                 cmd.Parameters.AddWithValue("@ProductName", dto.ProductName);
                 cmd.Parameters.AddWithValue("@Description", dto.Description);
                 cmd.Parameters.AddWithValue("@ListPrice", dto.ListPrice);
-                cmd.Parameters.AddWithValue("@SDiscountPercent", dto.DiscountPercent);
+                cmd.Parameters.AddWithValue("@DiscountPercent", dto.DiscountPercent);
 
                 return await cmd.ExecuteNonQueryAsync();
             }
