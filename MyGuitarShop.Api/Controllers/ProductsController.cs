@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyGuitarShop.Data.Ado.Repositories;
 using MyGuitarShop.Data.Ado.Entities;
+using MyGuitarShop.Common.DTOs;
+using MyGuitarShop.Data.Ado.DTOMappers;
 
 namespace MyGuitarShop.Api.Controllers
 {
@@ -8,7 +10,7 @@ namespace MyGuitarShop.Api.Controllers
     [ApiController]
     public class ProductsController(
         ILogger<ProductsController> logger,
-        IRepository<ProductEntity> repo)
+        IRepository<ProductDto> repo)
         : ControllerBase
     {
         [HttpGet]
@@ -47,19 +49,19 @@ namespace MyGuitarShop.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> InsertAsync(ProductEntity newProduct)
+        public async Task<IActionResult> CreateProductAsync(ProductDto newProduct)
         {
-            //try
-            //{
-            //    var numberProductsCreated = await repo.InsertAsync(newProduct);
+            try
+            {
+                var numberProductsCreated = await repo.InsertAsync(newProduct);
 
-            //    return Ok($"{numberProductsCreated} products created");
-            //}
-            //catch (Exception ex)
-            //{
-            //    logger.LogError(ex, "Error adding new product with ID {ProductID}", newProduct.ProductID);
-            //    return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
-            //}
+                return Ok($"{numberProductsCreated} products created");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error adding new product with ID {ProductID}", newProduct.ProductID);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+            }
 
             throw new NotImplementedException();
         }

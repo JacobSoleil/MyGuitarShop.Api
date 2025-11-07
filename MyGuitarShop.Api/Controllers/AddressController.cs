@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyGuitarShop.Data.Ado.Repositories;
 using MyGuitarShop.Data.Ado.Entities;
+using MyGuitarShop.Common.DTOs;
 
 namespace MyGuitarShop.Api.Controllers
 {
@@ -8,7 +9,7 @@ namespace MyGuitarShop.Api.Controllers
     [ApiController]
     public class AddressController(
         ILogger<AddressController> logger,
-        IRepository<AddressEntity> repo)
+        IRepository<AddressDto> repo)
         : ControllerBase
     {
         [HttpGet]

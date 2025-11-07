@@ -8,17 +8,18 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using MyGuitarShop.Data.Ado.Entities;
 using MyGuitarShop.Data.Ado.Factories;
+using MyGuitarShop.Common.DTOs;
 
 namespace MyGuitarShop.Data.Ado.Repositories
 {
     public class ProductRepo(
         ILogger<ProductRepo> logger,
         SqlConnectionFactory connectionFactory)
-        : IRepository<ProductEntity>
+        : IRepository<ProductDto>
     {
-        public async Task<IEnumerable<ProductEntity>> GetAllAsync()
+        public async Task<IEnumerable<ProductDto>> GetAllAsync()
         {
-            var products = new List<ProductEntity>();
+            var products = new List<ProductDto>();
 
             try
             {
@@ -30,7 +31,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
 
                 while (await reader.ReadAsync())
                 {
-                    var product = new ProductEntity
+                    var product = new ProductDto
                     {
                         ProductID = reader.GetInt32(reader.GetOrdinal("ProductID")),
                         CategoryID = reader.IsDBNull(reader.GetOrdinal("CategoryID")) ? null : reader.GetInt32(reader.GetOrdinal("ProductID")),
@@ -56,9 +57,9 @@ namespace MyGuitarShop.Data.Ado.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<ProductEntity?> FindByIdAsync(int id)
+        public async Task<ProductDto?> FindByIdAsync(int id)
         {
-            ProductEntity? product = null;
+            ProductDto? product = null;
 
             try
             {
@@ -70,10 +71,10 @@ namespace MyGuitarShop.Data.Ado.Repositories
 
                 if (await reader.ReadAsync())
                 {
-                    product = new ProductEntity
+                    product = new ProductDto
                     {
                         ProductID = reader.GetInt32(reader.GetOrdinal("ProductID")),
-                        CategoryID = reader.IsDBNull(reader.GetOrdinal("CategoryID")) ? null : reader.GetInt32(reader.GetOrdinal("ProductID")),
+                        CategoryID = reader.IsDBNull(reader.GetOrdinal("CategoryID")) ? null : reader.GetInt32(reader.GetOrdinal("CategoryID")),
                         ProductCode = reader.GetString(reader.GetOrdinal("ProductCode")),
                         ProductName = reader.GetString(reader.GetOrdinal("ProductName")),
                         Description = reader.GetString(reader.GetOrdinal("Description")),
@@ -94,38 +95,37 @@ namespace MyGuitarShop.Data.Ado.Repositories
             return product;
         }
 
-        public async Task<int> InsertAsync(ProductEntity entity)
+        public async Task<int> InsertAsync(ProductDto dto)
         {
-            //const string query = @"INSERT INTO Products 
-            //        (CategoryID, ProductCode, ProductName, Description, ListPrice, DiscountPercent, DateAdded) VALUES
-            //        (@CategoryID, @ProductCode, @ProductName, @Description, @ListPrice, @DiscountPercent, @DateAdded);";
+            const string query = @"INSERT INTO Products 
+                    (CategoryID, ProductCode, ProductName, Description, ListPrice, DiscountPercent, DateAdded) VALUES
+                    (@CategoryID, @ProductCode, @ProductName, @Description, @ListPrice, @DiscountPercent, GETDATE());";
 
-            //try
-            //{
-            //    await using var conn = await connectionFactory.OpenSqlConnectionAsync();
+            try
+            {
+                await using var conn = await connectionFactory.OpenSqlConnectionAsync();
 
-            //    await using var cmd = new SqlCommand(query, conn);
+                await using var cmd = new SqlCommand(query, conn);
 
-            //    cmd.Parameters.AddWithValue("@CategoryID", entity.CategoryID);
-            //    cmd.Parameters.AddWithValue("@ProductCode", entity.ProductCode);
-            //    cmd.Parameters.AddWithValue("@ProductName", entity.ProductName);
-            //    cmd.Parameters.AddWithValue("@Description", entity.Description);
-            //    cmd.Parameters.AddWithValue("@ListPrice", entity.ListPrice);
-            //    cmd.Parameters.AddWithValue("@SDiscountPercent", entity.DiscountPercent);
-            //    cmd.Parameters.AddWithValue("@DateAdded", entity.DateAdded);
+                cmd.Parameters.AddWithValue("@CategoryID", dto.CategoryID);
+                cmd.Parameters.AddWithValue("@ProductCode", dto.ProductCode);
+                cmd.Parameters.AddWithValue("@ProductName", dto.ProductName);
+                cmd.Parameters.AddWithValue("@Description", dto.Description);
+                cmd.Parameters.AddWithValue("@ListPrice", dto.ListPrice);
+                cmd.Parameters.AddWithValue("@SDiscountPercent", dto.DiscountPercent);
 
-            //    return await cmd.ExecuteNonQueryAsync();
-            //}
-            //catch (Exception ex)
-            //{
-            //    logger.LogError(ex.Message, "Error retrieving product by ID");
-            //    return 0;
-            //}
+                return await cmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message, "Error inserting new product");
+                return 0;
+            }
 
             throw new NotImplementedException();
         }
 
-        public async Task<int> UpdateAsync(int id, ProductEntity entity)
+        public async Task<int> UpdateAsync(int id, ProductDto dto)
         {
             throw new NotImplementedException();
         }

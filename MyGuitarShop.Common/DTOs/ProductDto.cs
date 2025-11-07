@@ -26,5 +26,6 @@ namespace MyGuitarShop.Common.DTOs
         public required decimal DiscountPercent { get; set; } = 0.0m;
 
         public DateTime? DateAdded { get; set; } = null;
+
     }
 }

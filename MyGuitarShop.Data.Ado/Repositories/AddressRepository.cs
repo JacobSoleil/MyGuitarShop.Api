@@ -8,22 +8,23 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using MyGuitarShop.Data.Ado.Entities;
 using MyGuitarShop.Data.Ado.Factories;
+using MyGuitarShop.Common.DTOs;
 
 namespace MyGuitarShop.Data.Ado.Repositories
 {
     public class AddressRepo(
         ILogger<AddressRepo> logger,
         SqlConnectionFactory connectionFactory)
-        : IRepository<AddressEntity>
+        : IRepository<AddressDto>
     {
         public async Task<int> DeleteAsync(int id)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<AddressEntity?> FindByIdAsync(int id)
+        public async Task<AddressDto?> FindByIdAsync(int id)
         {
-            AddressEntity? address = null;
+            AddressDto? address = null;
 
             try
             {
@@ -35,7 +36,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
 
                 if (await reader.ReadAsync())
                 {
-                    address = new AddressEntity
+                    address = new AddressDto
                     {
                         AddressID = reader.GetInt32(reader.GetOrdinal("AddressID")),
                         CustomerID = reader.IsDBNull(reader.GetOrdinal("CustomerID")) ? null : reader.GetInt32(reader.GetOrdinal("CustomerID")),
@@ -60,9 +61,9 @@ namespace MyGuitarShop.Data.Ado.Repositories
             return address;
         }
 
-        public async Task<IEnumerable<AddressEntity>> GetAllAsync()
+        public async Task<IEnumerable<AddressDto>> GetAllAsync()
         {
-            var addresses = new List<AddressEntity>();
+            var addresses = new List<AddressDto>();
 
             try
             {
@@ -74,7 +75,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
 
                 while (await reader.ReadAsync())
                 {
-                    var address = new AddressEntity
+                    var address = new AddressDto
                     {
                         AddressID = reader.GetInt32(reader.GetOrdinal("AddressID")),
                         CustomerID = reader.IsDBNull(reader.GetOrdinal("CustomerID")) ? null : reader.GetInt32(reader.GetOrdinal("CustomerID")),
@@ -96,12 +97,12 @@ namespace MyGuitarShop.Data.Ado.Repositories
             return addresses;
         }
 
-        public async Task<int> InsertAsync(AddressEntity entity)
+        public async Task<int> InsertAsync(AddressDto dto)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<int> UpdateAsync(int id, AddressEntity entity)
+        public async Task<int> UpdateAsync(int id, AddressDto entity)
         {
             throw new NotImplementedException();
         }
