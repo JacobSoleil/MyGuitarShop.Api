@@ -8,7 +8,7 @@ namespace MyGuitarShop.Api.Controllers
     [ApiController]
     public class AddressController(
         ILogger<AddressController> logger,
-        AddressRepo repo)
+        IRepository<AddressEntity> repo)
         : ControllerBase
     {
         [HttpGet]

@@ -8,7 +8,7 @@ namespace MyGuitarShop.Api.Controllers
     [ApiController]
     public class ProductsController(
         ILogger<ProductsController> logger,
-        ProductRepo repo)
+        IRepository<ProductEntity> repo)
         : ControllerBase
     {
         [HttpGet]
