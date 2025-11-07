@@ -91,6 +91,8 @@ namespace MyGuitarShop.Api
 
             builder.Services.AddScoped<IRepository<AddressDto>, AddressRepo>();
 
+            builder.Services.AddScoped<IRepository<AdministratorDto>, AdministratorRepo>();
+
             builder.Services.AddControllers();
         }
     }

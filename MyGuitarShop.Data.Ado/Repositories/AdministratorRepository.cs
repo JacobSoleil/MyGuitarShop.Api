@@ -141,7 +141,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
         public async Task<int> UpdateAsync(int id, AdministratorDto dto)
         {
             const string query = @"UPDATE Administrators 
-                                    SET EmailAddress = @EmailAddress, EmailAddress = @Password, FirstName = @FirstName, LastName = @LastName
+                                    SET EmailAddress = @EmailAddress, Password = @Password, FirstName = @FirstName, LastName = @LastName
                                     WHERE AdminID = @AdminID;";
 
             try
@@ -150,7 +150,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
 
                 await using var cmd = new SqlCommand(query, conn);
 
-                cmd.Parameters.AddWithValue("@AdminID", dto.AdminID);
+                cmd.Parameters.AddWithValue("@AdminID", id);
                 cmd.Parameters.AddWithValue("@EmailAddress", dto.EmailAddress);
                 cmd.Parameters.AddWithValue("@Password", dto.Password);
                 cmd.Parameters.AddWithValue("@FirstName", dto.FirstName);
