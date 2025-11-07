@@ -37,7 +37,7 @@ namespace MyGuitarShop.Api.Controllers
                 var product = await repo.FindByIdAsync(id);
                 if (product == null)
                 {
-                    return NotFound();
+                    return NotFound($"Product with id {id} not found");
                 }
                 return Ok(product);
             }
@@ -60,6 +60,25 @@ namespace MyGuitarShop.Api.Controllers
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error adding new product with ID {ProductID}", newProduct.ProductID);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateProductAsync(int id, ProductDto updatedProduct)
+        {
+            try
+            {
+                if (await repo.FindByIdAsync(id) == null)
+                    return NotFound($"Product with id {id} not found");
+
+                var numberProductsCreated = await repo.UpdateAsync(id, updatedProduct);
+
+                return Ok($"{numberProductsCreated} products created");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error updating product with ID {ProductID}", updatedProduct.ProductID);
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
 

@@ -125,7 +125,29 @@ namespace MyGuitarShop.Data.Ado.Repositories
 
         public async Task<int> UpdateAsync(int id, ProductDto dto)
         {
-            throw new NotImplementedException();
+            const string query = @"UPDATE Products 
+                                    SET ProductName = @ProductName, Description = @Description, ListPrice = @ListPrice, DiscountPercent = @DiscountPercent
+                                    WHERE ProductID = @ProductID;";
+
+            try
+            {
+                await using var conn = await connectionFactory.OpenSqlConnectionAsync();
+
+                await using var cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@ProductID", id);
+                cmd.Parameters.AddWithValue("@ProductName", dto.ProductName);
+                cmd.Parameters.AddWithValue("@Description", dto.Description);
+                cmd.Parameters.AddWithValue("@ListPrice", dto.ListPrice);
+                cmd.Parameters.AddWithValue("@DiscountPercent", dto.DiscountPercent);
+
+                return await cmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message, "Error updating product");
+                return 0;
+            }
         }
     }
 }
