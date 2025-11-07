@@ -15,7 +15,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
     public class ProductRepo(
         ILogger<ProductRepo> logger,
         SqlConnectionFactory connectionFactory)
-        : IRepository<ProductDto>
+        : IUniqueRepository<ProductDto>
     {
         public async Task<IEnumerable<ProductDto>> GetAllAsync()
         {
@@ -174,6 +174,49 @@ namespace MyGuitarShop.Data.Ado.Repositories
                 logger.LogError(ex.Message, "Error updating product");
                 throw;
             }
+        }
+
+        public async Task<ProductDto?> FindByUniqueAsync(string ident)
+        {
+            const string query = @"SELECT * FROM Products WHERE ProductCode = @ProductCode;";
+
+            ProductDto? product = null;
+
+            try
+            {
+                await using var conn = await connectionFactory.OpenSqlConnectionAsync();
+
+                await using var cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@ProductCode", ident);
+
+                await using var reader = await cmd.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
+                {
+                    product = new ProductDto
+                    {
+                        ProductID = reader.GetInt32(reader.GetOrdinal("ProductID")),
+                        CategoryID = reader.IsDBNull(reader.GetOrdinal("CategoryID")) ? null : reader.GetInt32(reader.GetOrdinal("CategoryID")),
+                        ProductCode = reader.GetString(reader.GetOrdinal("ProductCode")),
+                        ProductName = reader.GetString(reader.GetOrdinal("ProductName")),
+                        Description = reader.GetString(reader.GetOrdinal("Description")),
+                        ListPrice = reader.GetDecimal(reader.GetOrdinal("ListPrice")),
+                        DiscountPercent = reader.GetDecimal(reader.GetOrdinal("DiscountPercent")),
+                        DateAdded = reader.IsDBNull(reader.GetOrdinal("DateAdded")) ? null : reader.GetDateTime(reader.GetOrdinal("DateAdded"))
+                    };
+                }
+                else
+                {
+                    logger.LogError("Specified identifier could not be found");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message, "Error retrieving product by product code");
+                throw;
+            }
+            return product;
         }
     }
 }

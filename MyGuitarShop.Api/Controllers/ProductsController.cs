@@ -10,7 +10,7 @@ namespace MyGuitarShop.Api.Controllers
     [ApiController]
     public class ProductsController(
         ILogger<ProductsController> logger,
-        IRepository<ProductDto> repo)
+        IUniqueRepository<ProductDto> repo)
         : ControllerBase
     {
         [HttpGet]
@@ -47,6 +47,27 @@ namespace MyGuitarShop.Api.Controllers
             catch (Exception ex)
             {
                 logger.LogError(ex.Message, "Error retrieving product with ID {ProductID}", id);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+            }
+        }
+
+        [HttpGet("productCode/{ident}")]
+        public async Task<IActionResult> GetByProductCodeAsync(string ident)
+        {
+            try
+            {
+                var product = await repo.FindByUniqueAsync(ident);
+
+                if (product == null)
+                {
+                    return NotFound($"Product with identifier {ident} not found");
+                }
+
+                return Ok(product);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message, "Error retrieving product with identifier {ProductCode}", ident);
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }
