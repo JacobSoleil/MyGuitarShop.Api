@@ -8,7 +8,7 @@ namespace MyGuitarShop.Api.Controllers
     [ApiController]
     public class CategoryController(
         ILogger<CategoryController> logger,
-        IRepository<CategoryDto> repo)
+        IUniqueRepository<CategoryDto> repo)
         : ControllerBase
     {
         [HttpGet]
@@ -44,6 +44,27 @@ namespace MyGuitarShop.Api.Controllers
             catch (Exception ex)
             {
                 logger.LogError(ex.Message, "Error retrieving category with ID {CategoryID}", id);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+            }
+        }
+
+        [HttpGet("categoryName/{ident}")]
+        public async Task<IActionResult> GetByCategoryNameAsync(string ident)
+        {
+            try
+            {
+                var product = await repo.FindByUniqueAsync(ident);
+
+                if (product == null)
+                {
+                    return NotFound($"Category with identifier {ident} not found");
+                }
+
+                return Ok(product);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message, "Error retrieving category with identifier {CategoryName}", ident);
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }

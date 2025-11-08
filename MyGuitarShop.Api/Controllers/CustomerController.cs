@@ -48,7 +48,7 @@ namespace MyGuitarShop.Api.Controllers
             }
         }
 
-        [HttpGet("productCode/{ident}")]
+        [HttpGet("emailAddress/{ident}")]
         public async Task<IActionResult> GetByEmailAddressAsync(string ident)
         {
             try

@@ -14,7 +14,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
     public class CategoryRepo(
         ILogger<CategoryRepo> logger,
         SqlConnectionFactory connectionFactory)
-        : IRepository<CategoryDto>
+        : IUniqueRepository<CategoryDto>
     {
         public async Task<int> DeleteAsync(int id)
         {
@@ -69,6 +69,43 @@ namespace MyGuitarShop.Data.Ado.Repositories
             catch (Exception ex)
             {
                 logger.LogError(ex.Message, "Error retrieving category by ID");
+                throw;
+            }
+            return category;
+        }
+
+        public async Task<CategoryDto?> FindByUniqueAsync(string ident)
+        {
+            const string query = @"SELECT * FROM Categories WHERE CategoryName = @CategoryName;";
+
+            CategoryDto? category = null;
+
+            try
+            {
+                await using var conn = await connectionFactory.OpenSqlConnectionAsync();
+
+                await using var cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@CategoryName", ident);
+
+                await using var reader = await cmd.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
+                {
+                    category = new CategoryDto
+                    {
+                        CategoryID = reader.GetInt32(reader.GetOrdinal("CategoryID")),
+                        CategoryName = reader.GetString(reader.GetOrdinal("CategoryName"))
+                    };
+                }
+                else
+                {
+                    logger.LogError("Specified identifier could not be found");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message, "Error retrieving category by category name");
                 throw;
             }
             return category;
