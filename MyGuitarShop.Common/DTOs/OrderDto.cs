@@ -9,6 +9,14 @@ namespace MyGuitarShop.Common.DTOs
 {
     public class OrderDto
     {
+        public CustomerDto? customer { get; set; }
+
+        public AddressDto? billingAddress { get; set; }
+
+        public AddressDto? shippingAddress { get; set; }
+
+        public List<OrderItemDto>? orderItems { get; set; }
+
         public int? OrderID { get; set; }
 
         public int? CustomerID { get; set; }
