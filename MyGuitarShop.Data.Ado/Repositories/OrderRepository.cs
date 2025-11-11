@@ -156,6 +156,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
                 await using var conn = await connectionFactory.OpenSqlConnectionAsync();
 
                 await using var cmdBegin = new SqlCommand(initialQuery, conn);
+                await cmdBegin.ExecuteNonQueryAsync();
 
                 try
                 {
