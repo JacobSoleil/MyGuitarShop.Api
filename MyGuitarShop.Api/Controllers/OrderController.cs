@@ -55,7 +55,7 @@ namespace MyGuitarShop.Api.Controllers
             {
                 var numberOrdersCreated = await repo.InsertAsync(newOrder);
 
-                return Ok($"{numberOrdersCreated} orders created");
+                return Ok($"{numberOrdersCreated} rows affected");
             }
             catch (Exception ex)
             {

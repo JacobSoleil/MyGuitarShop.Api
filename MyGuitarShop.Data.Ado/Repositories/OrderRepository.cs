@@ -3,8 +3,10 @@ using Microsoft.Extensions.Logging;
 using MyGuitarShop.Common.DTOs;
 using MyGuitarShop.Data.Ado.Factories;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -125,34 +127,86 @@ namespace MyGuitarShop.Data.Ado.Repositories
 
         public async Task<int> InsertAsync(OrderDto dto)
         {
-            const string query = @"INSERT INTO Orders 
-                    (CustomerID, OrderDate, ShipAmount, TaxAmount, ShipDate, ShipAddressID, CardType, CardNumber, CardExpires, BillingAddressID) VALUES
-                    (@CustomerID, @OrderDate, @ShipAmount, @TaxAmount, @ShipDate, @ShipAddressID, @CardType, @CardNumber, @CardExpires, @BillingAddressID);";
+            const string initialQuery = @"BEGIN TRANSACTION;";
+
+            const string checkConditionsQuery = @"IF @CustomerID IN (SELECT CustomerID FROM Customers)
+                                                AND @BillingAddressID IN (SELECT AddressID FROM Addresses)
+                                                AND @ShipAddressID IN (SELECT AddressID FROM Addresses)
+	                                                INSERT INTO Orders 
+                                                    (CustomerID, OrderDate, ShipAmount, TaxAmount, ShipDate, ShipAddressID, CardType, CardNumber, CardExpires, BillingAddressID) VALUES
+                                                    (@CustomerID, GETDATE(), @ShipAmount, @TaxAmount, @ShipDate, @ShipAddressID, @CardType, @CardNumber, @CardExpires, @BillingAddressID);
+                                                ELSE
+                                                    THROW 51000, 'The customer or address does not exist.', 1;
+                                                SELECT SCOPE_IDENTITY() AS TargetID;";
+
+            const string itemInsertQuery = @"INSERT INTO OrderItems 
+                                                (OrderID, ProductID, ItemPrice, DiscountAmount, Quantity) VALUES
+                                                (@TargetID, @ProductID, @ItemPrice, @DiscountAmount, @Quantity);";
+
+            const string commitQuery = @"COMMIT TRANSACTION;";
+
+            const string rollbackQuery = @"ROLLBACK;";
+
+            int totalRowsAffected = 0;
 
             try
             {
                 await using var conn = await connectionFactory.OpenSqlConnectionAsync();
 
-                await using var cmd = new SqlCommand(query, conn);
+                await using var cmdBegin = new SqlCommand(initialQuery, conn);
+                await cmdBegin.ExecuteNonQueryAsync();
 
-                cmd.Parameters.AddWithValue("@CustomerID", dto.CustomerID);
-                cmd.Parameters.AddWithValue("@OrderDate", dto.OrderDate);
-                cmd.Parameters.AddWithValue("@ShipAmount", dto.ShipAmount);
-                cmd.Parameters.AddWithValue("@TaxAmount", dto.TaxAmount);
-                cmd.Parameters.AddWithValue("@ShipDate", dto.ShipDate);
-                cmd.Parameters.AddWithValue("@ShipAddressID", dto.ShipAddressID);
-                cmd.Parameters.AddWithValue("@CardType", dto.CardType);
-                cmd.Parameters.AddWithValue("@CardNumber", dto.CardNumber);
-                cmd.Parameters.AddWithValue("@CardExpires", dto.CardExpires);
-                cmd.Parameters.AddWithValue("@BillingAddressID", dto.BillingAddressID);
+                try
+                {
+                    await using var cmdCheck = new SqlCommand(checkConditionsQuery, conn);
 
-                return await cmd.ExecuteNonQueryAsync();
+                    cmdCheck.Parameters.AddWithValue("@CustomerID", dto.customer.CustomerID);
+                    cmdCheck.Parameters.AddWithValue("@ShipAmount", dto.ShipAmount);
+                    cmdCheck.Parameters.AddWithValue("@TaxAmount", dto.TaxAmount);
+                    cmdCheck.Parameters.AddWithValue("@ShipDate", dto.ShipDate);
+                    cmdCheck.Parameters.AddWithValue("@ShipAddressID", dto.shippingAddress.AddressID);
+                    cmdCheck.Parameters.AddWithValue("@CardType", dto.CardType);
+                    cmdCheck.Parameters.AddWithValue("@CardNumber", dto.CardNumber);
+                    cmdCheck.Parameters.AddWithValue("@CardExpires", dto.CardExpires);
+                    cmdCheck.Parameters.AddWithValue("@BillingAddressID", dto.billingAddress.AddressID);
+
+                    dto.OrderID = Decimal.ToInt32(Convert.ToDecimal(cmdCheck.ExecuteScalar()));
+
+                    if (dto.OrderID == null)
+                        throw new Exception("SCOPE_IDENTITY returned null");
+                    else
+                        totalRowsAffected++;
+
+                    foreach (var item in dto.orderItems)
+                    {
+                        await using var cmdItem = new SqlCommand(itemInsertQuery, conn);
+
+                        cmdItem.Parameters.AddWithValue("@TargetID", dto.OrderID);
+                        cmdItem.Parameters.AddWithValue("@ProductID", item.ProductID);
+                        cmdItem.Parameters.AddWithValue("@ItemPrice", item.ItemPrice);
+                        cmdItem.Parameters.AddWithValue("@DiscountAmount", item.DiscountAmount);
+                        cmdItem.Parameters.AddWithValue("@Quantity", item.Quantity);
+
+                        totalRowsAffected += await cmdItem.ExecuteNonQueryAsync();
+                    }
+                }
+                catch
+                {
+                    await using var cmdRollback = new SqlCommand(rollbackQuery, conn);
+                    await cmdRollback.ExecuteNonQueryAsync();
+                    throw;
+                }
+
+                await using var cmdCommit = new SqlCommand(commitQuery, conn);
+                await cmdCommit.ExecuteNonQueryAsync();
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.Message, "Error inserting new order");
                 throw;
             }
+
+            return totalRowsAffected;
         }
 
         public async Task<int> UpdateAsync(int id, OrderDto dto)
