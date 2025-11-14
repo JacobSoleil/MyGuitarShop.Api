@@ -7,6 +7,8 @@ using MyGuitarShop.Data.Ado.Factories;
 using MyGuitarShop.Data.Ado.Repositories;
 using MyGuitarShop.Common.DTOs;
 using System.Diagnostics;
+using MyGuitarShop.Data.EFCore.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace MyGuitarShop.Api
 {
@@ -100,6 +102,9 @@ namespace MyGuitarShop.Api
             builder.Services.AddScoped<IRepository<OrderItemDto>, OrderItemRepo>();
 
             builder.Services.AddScoped<IUniqueRepository<ProductDto>, ProductRepo>();
+
+            builder.Services.AddDbContextFactory<MyGuitarShopContext>(options =>
+                options.UseSqlServer(connectionString));
 
             builder.Services.AddControllers();
         }
