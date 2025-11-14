@@ -139,8 +139,6 @@ namespace MyGuitarShop.Data.Ado.Repositories
                                                     THROW 51000, 'The customer or address does not exist.', 1;
                                                 SELECT SCOPE_IDENTITY() AS TargetID;";
 
-            const string getIDQuery = @"SELECT SCOPE_IDENTITY() AS TargetID;";
-
             const string itemInsertQuery = @"INSERT INTO OrderItems 
                                                 (OrderID, ProductID, ItemPrice, DiscountAmount, Quantity) VALUES
                                                 (@TargetID, @ProductID, @ItemPrice, @DiscountAmount, @Quantity);";
@@ -209,36 +207,6 @@ namespace MyGuitarShop.Data.Ado.Repositories
             }
 
             return totalRowsAffected;
-
-
-            //const string query = @"INSERT INTO Orders 
-            //        (CustomerID, OrderDate, ShipAmount, TaxAmount, ShipDate, ShipAddressID, CardType, CardNumber, CardExpires, BillingAddressID) VALUES
-            //        (@CustomerID, @OrderDate, @ShipAmount, @TaxAmount, @ShipDate, @ShipAddressID, @CardType, @CardNumber, @CardExpires, @BillingAddressID);";
-
-            //try
-            //{
-            //    await using var conn = await connectionFactory.OpenSqlConnectionAsync();
-
-            //    await using var cmd = new SqlCommand(query, conn);
-
-            //    cmd.Parameters.AddWithValue("@CustomerID", dto.CustomerID);
-            //    cmd.Parameters.AddWithValue("@OrderDate", dto.OrderDate);
-            //    cmd.Parameters.AddWithValue("@ShipAmount", dto.ShipAmount);
-            //    cmd.Parameters.AddWithValue("@TaxAmount", dto.TaxAmount);
-            //    cmd.Parameters.AddWithValue("@ShipDate", dto.ShipDate);
-            //    cmd.Parameters.AddWithValue("@ShipAddressID", dto.ShipAddressID);
-            //    cmd.Parameters.AddWithValue("@CardType", dto.CardType);
-            //    cmd.Parameters.AddWithValue("@CardNumber", dto.CardNumber);
-            //    cmd.Parameters.AddWithValue("@CardExpires", dto.CardExpires);
-            //    cmd.Parameters.AddWithValue("@BillingAddressID", dto.BillingAddressID);
-
-            //    return await cmd.ExecuteNonQueryAsync();
-            //}
-            //catch (Exception ex)
-            //{
-            //    logger.LogError(ex.Message, "Error inserting new order");
-            //    throw;
-            //}
         }
 
         public async Task<int> UpdateAsync(int id, OrderDto dto)
