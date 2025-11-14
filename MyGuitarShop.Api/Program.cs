@@ -5,6 +5,7 @@ using Microsoft.Data.SqlClient;
 using MyGuitarShop.Data.Ado.Entities;
 using MyGuitarShop.Data.Ado.Factories;
 using MyGuitarShop.Data.Ado.Repositories;
+using MyGuitarShop.Data.Common.Interfaces;
 using MyGuitarShop.Common.DTOs;
 using System.Diagnostics;
 using MyGuitarShop.Data.EFCore.Context;
@@ -105,6 +106,14 @@ namespace MyGuitarShop.Api
 
             builder.Services.AddDbContextFactory<MyGuitarShopContext>(options =>
                 options.UseSqlServer(connectionString));
+
+            builder.Services.AddScoped<MyGuitarShop.Data.EFCore.Repositories.ProductRepository>();
+            builder.Services.AddScoped<MyGuitarShop.Data.EFCore.Repositories.CategoryRepository>();
+            builder.Services.AddScoped<MyGuitarShop.Data.EFCore.Repositories.AddressRepository>();
+            builder.Services.AddScoped<MyGuitarShop.Data.EFCore.Repositories.CustomerRepository>();
+            builder.Services.AddScoped<MyGuitarShop.Data.EFCore.Repositories.OrderRepository>();
+            builder.Services.AddScoped<MyGuitarShop.Data.EFCore.Repositories.OrderItemRepository>();
+            builder.Services.AddScoped<MyGuitarShop.Data.EFCore.Repositories.AdministratorRepository>();
 
             builder.Services.AddControllers();
         }

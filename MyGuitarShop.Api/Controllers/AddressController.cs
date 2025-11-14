@@ -2,6 +2,7 @@
 using MyGuitarShop.Data.Ado.Repositories;
 using MyGuitarShop.Data.Ado.Entities;
 using MyGuitarShop.Common.DTOs;
+using MyGuitarShop.Data.Common.Interfaces;
 
 namespace MyGuitarShop.Api.Controllers
 {

@@ -8,6 +8,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using MyGuitarShop.Data.Ado.Entities;
 using MyGuitarShop.Data.Ado.Factories;
+using MyGuitarShop.Data.Common.Interfaces;
 using MyGuitarShop.Common.DTOs;
 
 namespace MyGuitarShop.Data.Ado.Repositories

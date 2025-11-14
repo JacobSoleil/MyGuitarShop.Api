@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyGuitarShop.Data.Ado.Repositories
+namespace MyGuitarShop.Data.Common.Interfaces
 {
     public interface IUniqueRepository<TDto> : IRepository<TDto>
     {
