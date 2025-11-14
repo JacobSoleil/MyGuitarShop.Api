@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MyGuitarShop.Data.Ado.Repositories;
+using MyGuitarShop.Data.Common.Interfaces;
 using MyGuitarShop.Data.Ado.Entities;
 using MyGuitarShop.Common.DTOs;
 using MyGuitarShop.Data.Ado.DTOMappers;

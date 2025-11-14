@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using MyGuitarShop.Common.DTOs;
 using MyGuitarShop.Data.Ado.Factories;
+using MyGuitarShop.Data.Common.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
