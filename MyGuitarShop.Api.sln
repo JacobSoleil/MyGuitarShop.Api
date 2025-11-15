@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyGuitarShop.Data.Ado", "My
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyGuitarShop.Data.EFCore", "MyGuitarShop.Data.EFCore\MyGuitarShop.Data.EFCore.csproj", "{BE0724DE-C222-4F7E-9D8E-B2272ED1DBAD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyGuitarShop.Data.MongoDb", "MyGuitarShop.Data.MongoDb\MyGuitarShop.Data.MongoDb.csproj", "{7C8DCC18-2FFA-49A0-B96F-D1D53CBD6AA5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{BE0724DE-C222-4F7E-9D8E-B2272ED1DBAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE0724DE-C222-4F7E-9D8E-B2272ED1DBAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE0724DE-C222-4F7E-9D8E-B2272ED1DBAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C8DCC18-2FFA-49A0-B96F-D1D53CBD6AA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C8DCC18-2FFA-49A0-B96F-D1D53CBD6AA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C8DCC18-2FFA-49A0-B96F-D1D53CBD6AA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C8DCC18-2FFA-49A0-B96F-D1D53CBD6AA5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
