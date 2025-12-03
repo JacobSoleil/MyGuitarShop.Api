@@ -9,7 +9,7 @@ namespace MyGuitarShop.Data.MongoDb.Models
 {
     public class ProductModel : MongoModel
     {
-        public required string CategoryID { get; set; }
+        public int? CategoryID { get; set; }
         public string? ProductCode { get; set; }
         public string? ProductName { get; set; }
         public string? Description { get; set; }
