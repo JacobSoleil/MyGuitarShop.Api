@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MyGuitarShop.Data.Common.Interfaces;
+using MyGuitarShop.Common.Interfaces;
 using MyGuitarShop.Api.Mappers;
 
 namespace MyGuitarShop.Api.Abstract
@@ -8,7 +8,7 @@ namespace MyGuitarShop.Api.Abstract
     [ApiController]
     [Route("api/[controller]")]
     public class BaseController<TDto, TEntity>(
-        IRepository<TEntity> repo,
+        IRepository<TEntity, int> repo,
         ILogger<BaseController<TDto, TEntity>> logger
         ) : ControllerBase where TEntity : class, new()
     {

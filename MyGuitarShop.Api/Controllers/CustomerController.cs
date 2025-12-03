@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyGuitarShop.Common.DTOs;
-using MyGuitarShop.Data.Common.Interfaces;
+using MyGuitarShop.Common.Interfaces;
 
 namespace MyGuitarShop.Api.Controllers
 {

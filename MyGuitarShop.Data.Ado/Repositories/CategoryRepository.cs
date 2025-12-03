@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using MyGuitarShop.Common.DTOs;
 using MyGuitarShop.Data.Ado.Factories;
-using MyGuitarShop.Data.Common.Interfaces;
+using MyGuitarShop.Common.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +17,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
         SqlConnectionFactory connectionFactory)
         : IUniqueRepository<CategoryDto>
     {
-        public async Task<int> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
             const string query = @"DELETE FROM Categories WHERE CategoryID = @CategoryID;";
 
@@ -29,7 +29,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
 
                 cmd.Parameters.AddWithValue("@CategoryID", id);
 
-                return await cmd.ExecuteNonQueryAsync();
+                return await cmd.ExecuteNonQueryAsync() == 1;
             }
             catch (Exception ex)
             {
@@ -144,7 +144,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
             return categories;
         }
 
-        public async Task<int> InsertAsync(CategoryDto dto)
+        public async Task<bool> InsertAsync(CategoryDto dto)
         {
             const string query = @"INSERT INTO Categories 
                     (CategoryName) VALUES
@@ -158,7 +158,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
 
                 cmd.Parameters.AddWithValue("@CategoryName", dto.CategoryName);
 
-                return await cmd.ExecuteNonQueryAsync();
+                return await cmd.ExecuteNonQueryAsync() == 1;
             }
             catch (Exception ex)
             {
@@ -167,7 +167,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
             }
         }
 
-        public async Task<int> UpdateAsync(int id, CategoryDto dto)
+        public async Task<bool> UpdateAsync(int id, CategoryDto dto)
         {
             const string query = @"UPDATE Categories 
                                     SET CategoryName = @CategoryName
@@ -182,7 +182,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
                 cmd.Parameters.AddWithValue("@CategoryID", id);
                 cmd.Parameters.AddWithValue("@CategoryName", dto.CategoryName);
 
-                return await cmd.ExecuteNonQueryAsync();
+                return await cmd.ExecuteNonQueryAsync() == 1;
             }
             catch (Exception ex)
             {

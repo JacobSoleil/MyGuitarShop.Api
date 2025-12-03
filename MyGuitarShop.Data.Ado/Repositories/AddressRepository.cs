@@ -8,7 +8,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using MyGuitarShop.Data.Ado.Entities;
 using MyGuitarShop.Data.Ado.Factories;
-using MyGuitarShop.Data.Common.Interfaces;
+using MyGuitarShop.Common.Interfaces;
 using MyGuitarShop.Common.DTOs;
 
 namespace MyGuitarShop.Data.Ado.Repositories
@@ -16,9 +16,9 @@ namespace MyGuitarShop.Data.Ado.Repositories
     public class AddressRepo(
         ILogger<AddressRepo> logger,
         SqlConnectionFactory connectionFactory)
-        : IRepository<AddressDto>
+        : IRepository<AddressDto, int>
     {
-        public async Task<int> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
             const string query = @"DELETE FROM Addresses WHERE AddressID = @AddressID;";
 
@@ -30,7 +30,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
 
                 cmd.Parameters.AddWithValue("@AddressID", id);
 
-                return await cmd.ExecuteNonQueryAsync();
+                return await cmd.ExecuteNonQueryAsync() == 1;
             }
             catch (Exception ex)
             {
@@ -122,7 +122,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
             return addresses;
         }
 
-        public async Task<int> InsertAsync(AddressDto dto)
+        public async Task<bool> InsertAsync(AddressDto dto)
         {
             const string query = @"INSERT INTO Addresses 
                     (CustomerID, Line1, Line2, City, State, ZipCode, Phone, Disabled) VALUES
@@ -143,7 +143,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
                 cmd.Parameters.AddWithValue("@Phone", dto.Phone);
                 cmd.Parameters.AddWithValue("@Disabled", dto.Disabled);
 
-                return await cmd.ExecuteNonQueryAsync();
+                return await cmd.ExecuteNonQueryAsync() == 1;
             }
             catch (Exception ex)
             {
@@ -152,7 +152,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
             }
         }
 
-        public async Task<int> UpdateAsync(int id, AddressDto dto)
+        public async Task<bool> UpdateAsync(int id, AddressDto dto)
         {
             const string query = @"UPDATE Addresses 
                                     SET Line1 = @Line1, Line2 = @Line2, City = @City, State = @State, ZipCode = @ZipCode, Phone = @Phone, Disabled = @Disabled
@@ -173,7 +173,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
                 cmd.Parameters.AddWithValue("@Phone", dto.Phone);
                 cmd.Parameters.AddWithValue("@Disabled", dto.Disabled);
 
-                return await cmd.ExecuteNonQueryAsync();
+                return await cmd.ExecuteNonQueryAsync() == 1;
             }
             catch (Exception ex)
             {

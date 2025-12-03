@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using MyGuitarShop.Common.DTOs;
 using MyGuitarShop.Data.Ado.Factories;
-using MyGuitarShop.Data.Common.Interfaces;
+using MyGuitarShop.Common.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +16,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
         SqlConnectionFactory connectionFactory)
         : IUniqueRepository<CustomerDto>
     {
-        public async Task<int> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
             const string query = @"DELETE FROM Customers WHERE CustomerID = @CustomerID;";
 
@@ -28,7 +28,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
 
                 cmd.Parameters.AddWithValue("@CustomerID", id);
 
-                return await cmd.ExecuteNonQueryAsync();
+                return await cmd.ExecuteNonQueryAsync() == 1;
             }
             catch (Exception ex)
             {
@@ -158,7 +158,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
             return customers;
         }
 
-        public async Task<int> InsertAsync(CustomerDto dto)
+        public async Task<bool> InsertAsync(CustomerDto dto)
         {
             const string query = @"INSERT INTO Customers 
                     (EmailAddress, Password, FirstName, LastName, ShippingAddressID, BillingAddressID) VALUES
@@ -177,7 +177,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
                 cmd.Parameters.AddWithValue("@ShippingAddressID", dto.ShippingAddressID);
                 cmd.Parameters.AddWithValue("@BillingAddressID", dto.BillingAddressID);
 
-                return await cmd.ExecuteNonQueryAsync();
+                return await cmd.ExecuteNonQueryAsync() == 1;
             }
             catch (Exception ex)
             {
@@ -186,7 +186,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
             }
         }
 
-        public async Task<int> UpdateAsync(int id, CustomerDto dto)
+        public async Task<bool> UpdateAsync(int id, CustomerDto dto)
         {
             const string query = @"UPDATE Customers 
                                     SET EmailAddress = @EmailAddress, Password = @Password, FirstName = @FirstName, LastName = @LastName, ShippingAddressID = @ShippingAddressID, BillingAddressID = @BillingAddressID
@@ -206,7 +206,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
                 cmd.Parameters.AddWithValue("@ShippingAddressID", dto.ShippingAddressID);
                 cmd.Parameters.AddWithValue("@BillingAddressID", dto.BillingAddressID);
 
-                return await cmd.ExecuteNonQueryAsync();
+                return await cmd.ExecuteNonQueryAsync() == 1;
             }
             catch (Exception ex)
             {

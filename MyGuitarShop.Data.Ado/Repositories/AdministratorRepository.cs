@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using MyGuitarShop.Common.DTOs;
 using MyGuitarShop.Data.Ado.Factories;
-using MyGuitarShop.Data.Common.Interfaces;
+using MyGuitarShop.Common.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +14,9 @@ namespace MyGuitarShop.Data.Ado.Repositories
     public class AdministratorRepo(
         ILogger<AdministratorRepo> logger,
         SqlConnectionFactory connectionFactory)
-        : IRepository<AdministratorDto>
+        : IRepository<AdministratorDto, int>
     {
-        public async Task<int> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
             const string query = @"DELETE FROM Administrators WHERE AdminID = @AdminID;";
 
@@ -28,7 +28,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
 
                 cmd.Parameters.AddWithValue("@AdminID", id);
 
-                return await cmd.ExecuteNonQueryAsync();
+                return await cmd.ExecuteNonQueryAsync() == 1;
             }
             catch (Exception ex)
             {
@@ -112,7 +112,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
             return adminList;
         }
 
-        public async Task<int> InsertAsync(AdministratorDto dto)
+        public async Task<bool> InsertAsync(AdministratorDto dto)
         {
             const string query = @"INSERT INTO Administrators 
                     (EmailAddress, Password, FirstName, LastName) VALUES
@@ -130,7 +130,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
                 cmd.Parameters.AddWithValue("@FirstName", dto.FirstName);
                 cmd.Parameters.AddWithValue("@LastName", dto.LastName);
 
-                return await cmd.ExecuteNonQueryAsync();
+                return await cmd.ExecuteNonQueryAsync() == 1;
             }
             catch (Exception ex)
             {
@@ -139,7 +139,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
             }
         }
 
-        public async Task<int> UpdateAsync(int id, AdministratorDto dto)
+        public async Task<bool> UpdateAsync(int id, AdministratorDto dto)
         {
             const string query = @"UPDATE Administrators 
                                     SET EmailAddress = @EmailAddress, Password = @Password, FirstName = @FirstName, LastName = @LastName
@@ -157,7 +157,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
                 cmd.Parameters.AddWithValue("@FirstName", dto.FirstName);
                 cmd.Parameters.AddWithValue("@LastName", dto.LastName);
 
-                return await cmd.ExecuteNonQueryAsync();
+                return await cmd.ExecuteNonQueryAsync() == 1;
             }
             catch (Exception ex)
             {

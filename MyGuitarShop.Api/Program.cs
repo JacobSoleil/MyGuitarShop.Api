@@ -5,12 +5,13 @@ using Microsoft.Data.SqlClient;
 using MyGuitarShop.Data.Ado.Entities;
 using MyGuitarShop.Data.Ado.Factories;
 using MyGuitarShop.Data.Ado.Repositories;
-using MyGuitarShop.Data.Common.Interfaces;
+using MyGuitarShop.Common.Interfaces;
 using MyGuitarShop.Common.DTOs;
 using System.Diagnostics;
 using MyGuitarShop.Data.EFCore.Context;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
+using MyGuitarShop.Data.MongoDb.Services;
 
 namespace MyGuitarShop.Api
 {
@@ -92,17 +93,17 @@ namespace MyGuitarShop.Api
 
             builder.Services.AddSingleton(new SqlConnectionFactory(connectionString));
 
-            builder.Services.AddScoped<IRepository<AddressDto>, AddressRepo>();
+            builder.Services.AddScoped<IRepository<AddressDto, int>, AddressRepo>();
 
-            builder.Services.AddScoped<IRepository<AdministratorDto>, AdministratorRepo>();
+            builder.Services.AddScoped<IRepository<AdministratorDto, int>, AdministratorRepo>();
 
             builder.Services.AddScoped<IUniqueRepository<CategoryDto>, CategoryRepo>();
 
             builder.Services.AddScoped<IUniqueRepository<CustomerDto>, CustomerRepo>();
 
-            builder.Services.AddScoped<IRepository<OrderDto>, OrderRepo>();
+            builder.Services.AddScoped<IRepository<OrderDto, int>, OrderRepo>();
 
-            builder.Services.AddScoped<IRepository<OrderItemDto>, OrderItemRepo>();
+            builder.Services.AddScoped<IRepository<OrderItemDto, int>, OrderItemRepo>();
 
             builder.Services.AddScoped<IUniqueRepository<ProductDto>, ProductRepo>();
 
@@ -129,6 +130,8 @@ namespace MyGuitarShop.Api
                 var mongoClient = sp.GetRequiredService<IMongoClient>();
                 return mongoClient.GetDatabase("MyGuitarShopCluster");
             });
+
+            builder.Services.AddScoped<MongoProductService>();
 
             builder.Services.AddControllers();
         }

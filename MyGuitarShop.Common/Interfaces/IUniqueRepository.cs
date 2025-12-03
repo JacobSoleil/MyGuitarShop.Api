@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyGuitarShop.Data.Common.Interfaces
+namespace MyGuitarShop.Common.Interfaces
 {
-    public interface IUniqueRepository<TDto> : IRepository<TDto>
+    public interface IUniqueRepository<TDto> : IRepository<TDto, int>
     {
         Task<TDto?> FindByUniqueAsync(string ident);
     }

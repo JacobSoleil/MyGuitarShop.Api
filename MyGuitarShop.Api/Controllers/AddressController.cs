@@ -2,7 +2,7 @@
 using MyGuitarShop.Data.Ado.Repositories;
 using MyGuitarShop.Data.Ado.Entities;
 using MyGuitarShop.Common.DTOs;
-using MyGuitarShop.Data.Common.Interfaces;
+using MyGuitarShop.Common.Interfaces;
 
 namespace MyGuitarShop.Api.Controllers
 {
@@ -10,7 +10,7 @@ namespace MyGuitarShop.Api.Controllers
     [ApiController]
     public class AddressController(
         ILogger<AddressController> logger,
-        IRepository<AddressDto> repo)
+        IRepository<AddressDto, int> repo)
         : ControllerBase
     {
         [HttpGet]

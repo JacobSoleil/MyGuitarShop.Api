@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using MyGuitarShop.Common.DTOs;
 using MyGuitarShop.Data.Ado.Factories;
-using MyGuitarShop.Data.Common.Interfaces;
+using MyGuitarShop.Common.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,9 +16,9 @@ namespace MyGuitarShop.Data.Ado.Repositories
     public class OrderRepo(
         ILogger<OrderRepo> logger,
         SqlConnectionFactory connectionFactory)
-        : IRepository<OrderDto>
+        : IRepository<OrderDto, int>
     {
-        public async Task<int> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
             const string query = @"DELETE FROM Orders WHERE OrderID = @OrderID;";
 
@@ -30,7 +30,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
 
                 cmd.Parameters.AddWithValue("@OrderID", id);
 
-                return await cmd.ExecuteNonQueryAsync();
+                return await cmd.ExecuteNonQueryAsync() == 1;
             }
             catch (Exception ex)
             {
@@ -126,7 +126,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
             return orders;
         }
 
-        public async Task<int> InsertAsync(OrderDto dto)
+        public async Task<bool> InsertAsync(OrderDto dto)
         {
             const string initialQuery = @"BEGIN TRANSACTION;";
 
@@ -207,10 +207,10 @@ namespace MyGuitarShop.Data.Ado.Repositories
                 throw;
             }
 
-            return totalRowsAffected;
+            return totalRowsAffected == 1;
         }
 
-        public async Task<int> UpdateAsync(int id, OrderDto dto)
+        public async Task<bool> UpdateAsync(int id, OrderDto dto)
         {
             const string query = @"UPDATE Orders 
                                     SET CustomerID = @CustomerID, OrderDate = @OrderDate, ShipAmount = @ShipAmount, TaxAmount = @TaxAmount, ShipDate = @ShipDate, ShipAddressID = @ShipAddressID, CardType = @CardType, CardNumber = @CardNumber, CardExpires = @CardExpires, BillingAddressID = @BillingAddressID
@@ -234,7 +234,7 @@ namespace MyGuitarShop.Data.Ado.Repositories
                 cmd.Parameters.AddWithValue("@CardExpires", dto.CardExpires);
                 cmd.Parameters.AddWithValue("@BillingAddressID", dto.BillingAddressID);
 
-                return await cmd.ExecuteNonQueryAsync();
+                return await cmd.ExecuteNonQueryAsync() == 1;
             }
             catch (Exception ex)
             {
