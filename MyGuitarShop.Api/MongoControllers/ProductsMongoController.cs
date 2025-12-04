@@ -39,7 +39,7 @@ namespace MyGuitarShop.Api.MongoControllers
                 var product = await productService.FindByIdAsync(id);
                 if (product == null)
                 {
-                    return NotFound();
+                    return NotFound($"Product with id {id} not found in MongoDB");
                 }
                 return Ok(product);
             }
@@ -63,7 +63,8 @@ namespace MyGuitarShop.Api.MongoControllers
                     ProductName = newProduct.ProductName,
                     Description = newProduct.Description,
                     ListPrice = newProduct.ListPrice,
-                    DiscountPercent = newProduct.DiscountPercent
+                    DiscountPercent = newProduct.DiscountPercent,
+                    DateAdded = default
                 };
 
                 if (await productService.InsertAsync(model))
@@ -93,7 +94,8 @@ namespace MyGuitarShop.Api.MongoControllers
                     ProductName = updatedProduct.ProductName,
                     Description = updatedProduct.Description,
                     ListPrice = updatedProduct.ListPrice,
-                    DiscountPercent = updatedProduct.DiscountPercent
+                    DiscountPercent = updatedProduct.DiscountPercent,
+                    DateAdded = default
                 };
 
                 var numberProductsUpdated = await productService.UpdateAsync(id, entity);

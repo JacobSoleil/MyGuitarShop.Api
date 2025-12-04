@@ -12,6 +12,7 @@ using MyGuitarShop.Data.EFCore.Context;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using MyGuitarShop.Data.MongoDb.Services;
+using MyGuitarShop.Data.MongoDb.Models;
 
 namespace MyGuitarShop.Api
 {
@@ -105,7 +106,10 @@ namespace MyGuitarShop.Api
 
             builder.Services.AddScoped<IRepository<OrderItemDto, int>, OrderItemRepo>();
 
+            builder.Services.AddScoped<IRepository<ProductEntity, int>, ProductRepoMongo>();
+
             builder.Services.AddScoped<IUniqueRepository<ProductDto>, ProductRepo>();
+
 
             //EFCore
             builder.Services.AddDbContextFactory<MyGuitarShopContext>(options =>
